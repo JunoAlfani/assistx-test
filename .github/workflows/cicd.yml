@@ -37,21 +37,15 @@ jobs:
             juno41/devops-test:${{ github.sha }}
           platforms: linux/amd64
 
-      - name: Setup kubeconfig
-        run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-
-      - name: Apply manifests
-        run: kubectl apply -f k8s/
-
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
 
-      - name: Deploy to Kubernetes
-        if: github.ref == 'refs/heads/main'
+      - name: Setup kubeconfig
         run: |
-          kubectl apply -f k8s/
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -f k8s/
