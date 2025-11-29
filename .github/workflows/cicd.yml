@@ -31,13 +31,19 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64
           tags: |
             juno41/devops-test:latest
             juno41/devops-test:${{ github.sha }}
+          platforms: linux/amd64
 
-      - name: Apply Kubernetes manifests
-        uses: steebchen/kubectl@v2
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
         with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-          command: apply -f k8s/
+          version: 'latest'
+
+      - name: Deploy to Kubernetes
+        if: github.ref == 'refs/heads/main'
+        run: |
+          kubectl apply -f k8s/
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
