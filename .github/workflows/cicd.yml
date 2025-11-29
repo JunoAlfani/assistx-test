@@ -30,6 +30,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: docker/Dockerfile
           push: true
           tags: |
             juno41/devops-test:latest
