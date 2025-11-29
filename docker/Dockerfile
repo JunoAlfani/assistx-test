@@ -31,8 +31,26 @@ FROM php:8.2-fpm-alpine AS php_base
 
 RUN apk add --no-cache nginx supervisor curl bash
 
+# Install OS packages (fixing erorr Docker build for laravel)
+RUN apk add --no-cache \
+    nginx \
+    supervisor \
+    curl \
+    bash \
+    autoconf \
+    g++ \
+    make \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libzip-dev \
+    oniguruma-dev \
+    linux-headers \
+    shadow
+
 # install extensions (pdo, pdo_mysql, mbstring, xml, tokenizer, json)
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath opcache
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath zip gd opcache
 
 RUN addgroup -g 1000 appuser && adduser -D -u 1000 -G appuser appuser
 
