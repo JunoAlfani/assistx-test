@@ -32,14 +32,13 @@ jobs:
           context: .
           push: true
           tags: |
-            juno41/assistx-devops-test:latest
-            juno41/assistx-devops-test:${{ github.sha }}
+            juno41/devops-test:latest
+            juno41/devops-test:${{ github.sha }}
           platforms: linux/amd64
 
-      - name: Deploy to Kubernetes (optional)
+      - name: Deploy to Kubernetes
         if: github.ref == 'refs/heads/main'
-        uses: thayban/kubectl-action@v1
+        uses: appleboy/kubectl-action@master
         with:
-          args: apply -f k8s/deployment.yaml
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          args: apply -f k8s/
