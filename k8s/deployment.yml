@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assistx-devops
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: assistx-devops
+  template:
+    metadata:
+      labels:
+        app: assistx-devops
+    spec:
+      containers:
+        - name: assistx-devops
+          image: juno41/assistx-devops-test:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
