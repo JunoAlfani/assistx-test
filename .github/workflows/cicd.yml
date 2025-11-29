@@ -37,6 +37,13 @@ jobs:
             juno41/devops-test:${{ github.sha }}
           platforms: linux/amd64
 
+      - name: Setup kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      - name: Apply manifests
+        run: kubectl apply -f k8s/
+
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
