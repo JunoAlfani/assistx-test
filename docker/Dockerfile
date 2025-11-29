@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # composer install
-FROM --platform=linux/amd64 composer:2.6 AS composer_builder
+FROM php:8.2-fpm
 
 WORKDIR /app
 
