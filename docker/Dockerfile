@@ -9,7 +9,7 @@ COPY vite.config.js ./
 
 RUN npm ci
 
-COPY resources resources
+COPY . .
 
 RUN npm run build
 
@@ -40,7 +40,7 @@ WORKDIR /var/www/html
 
 COPY --from=composer_builder /app /var/www/html
 
-COPY --from=node_builder /app/resources/js/dist /var/www/html/public/build
+COPY --from=node_builder /app/public/build /var/www/html/public/build
 
 # nginx config and supervisor
 COPY docker/nginx.conf /etc/nginx/nginx.conf
