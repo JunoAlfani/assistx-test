@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: assistx-devops
+  name: assistx-deployment
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: assistx-devops
+      app: assistx-app
   template:
     metadata:
       labels:
-        app: assistx-devops
+        app: assistx-app
     spec:
       containers:
-        - name: assistx-devops
-          image: juno41/assistx-devops-test:latest
+        - name: assistx-container
+          image: juno41/devops-test:latest
           ports:
             - containerPort: 8080
           readinessProbe:
