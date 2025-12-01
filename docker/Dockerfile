@@ -29,26 +29,10 @@ RUN composer dump-autoload --optimize
 # adding image with php-fpm + nginx on alpine
 FROM php:8.2-fpm-alpine AS php_base
 
-RUN apk add --no-cache nginx supervisor curl bash
+RUN apk add --no-cache bash curl autoconf g++ make shadow \
+    libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev oniguruma-dev linux-headers \
+    nginx supervisor wget
 
-# Install OS packages (fixing erorr Docker build for laravel)
-RUN apk add --no-cache \
-    nginx \
-    supervisor \
-    curl \
-    bash \
-    autoconf \
-    g++ \
-    make \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libzip-dev \
-    oniguruma-dev \
-    linux-headers \
-    shadow
-
-# install extensions (pdo, pdo_mysql, mbstring, xml, tokenizer, json)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath zip gd opcache
 
@@ -60,16 +44,15 @@ COPY --from=composer_builder /app /var/www/html
 
 COPY --from=node_builder /app/public/build /var/www/html/public/build
 
-# nginx config and supervisor
 COPY docker/nginx.conf /etc/nginx/nginx.conf
-
 COPY docker/supervisord.conf /etc/supervisord.conf
 
-RUN chown -R appuser:appuser /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R appuser:appuser /var/www/html && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD curl -f http://localhost:8080/ || exit 1
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD wget -qO- http://localhost:8080/ || exit 1
 
 USER appuser
 
