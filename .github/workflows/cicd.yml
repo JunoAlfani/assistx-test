@@ -47,7 +47,7 @@ jobs:
       - name: Generate kubeconfig from EKS
         run: |
           aws eks update-kubeconfig \
-            --name assistx-cluster1 \
+            --name assistx-cluster2 \
             --region us-east-1
 
       - name: Install kubectl
