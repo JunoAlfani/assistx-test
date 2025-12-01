@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,10 +44,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup kubeconfig
+      - name: Generate kubeconfig from EKS
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          aws eks update-kubeconfig \
+            --name assistx-cluster1 \
+            --region us-east-1
 
       - name: Install kubectl
         run: |
