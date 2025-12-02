@@ -1,17 +1,22 @@
 # node build
 FROM node:20-alpine AS node_builder
 WORKDIR /app
-COPY package*.json .
-COPY vite.config.js .
+
+COPY package*.json ./
+COPY vite.config.js ./
 RUN npm ci
+
 COPY . .
 RUN npm run build
 
 # composer builder
 FROM --platform=linux/amd64 composer:2.6 AS composer_builder
 WORKDIR /app
-COPY composer.json composer.lock .
+
+# FIX: destination harus berupa folder → gunakan ./
+COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --no-scripts --no-progress --prefer-dist
+
 COPY . .
 RUN composer dump-autoload --optimize
 
@@ -46,5 +51,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
     CMD wget -qO- http://localhost:8080/ || exit 1
 
-# IMPORTANT: RUN AS ROOT SO NGINX CAN START
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
